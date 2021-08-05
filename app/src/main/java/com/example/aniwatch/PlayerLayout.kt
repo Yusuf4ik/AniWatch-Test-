@@ -1,5 +1,7 @@
 package com.example.aniwatch
 
+import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -30,7 +35,6 @@ class PlayerLayout : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         _binding = FragmentPlayerLayoutBinding.inflate(layoutInflater, container, false)
         return binding.root    }
     override fun onDestroyView() {
@@ -40,71 +44,24 @@ class PlayerLayout : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val uriPath = "https://api.anilibria.tv/v2/getTitle?id=8500/videos/ts/8500/0001/playlist.m3u8"
-        val uri = Uri.parse(uriPath)
-        binding.videoView.setVideoURI(uri)
-        binding.videoView.requestFocus()
-        playersActivity()
-//        viewModel = ViewModelProvider(this).get(CommonVM::class.java)
-//         val ListVideos:MutableList<Videos>
-//        viewModel.liveDataAnimes.observe(viewLifecycleOwner, {
-//        })
 
 
+
+        anime()
     }
-  fun  playersActivity(){
-      binding.playBig.setOnClickListener{
-          if (!isPlaying){
-              isPlaying = true
-              binding.videoView.start()
-              binding.playBig.animate().alpha(0f).duration = 500
-              binding.playBig.setImageResource(R.drawable.ic_baseline_pause_24)
-              binding.play.setImageResource(R.drawable.ic_baseline_pause_24)
-          }else if(isPlaying){
-              isPlaying = false
-              binding.videoView.stopPlayback()
-              binding.playBig.animate().alpha(1f).duration = 500
-              binding.playBig.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-              binding.play.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-          }
 
-      }
+    @SuppressLint("SetJavaScriptEnabled")
+    fun anime() {
+        binding.apply {
+            webView.webViewClient = WebViewClient()
+            webView.loadUrl("https://animego.org")
+            webView.settings.javaScriptEnabled = true
+            webView.webChromeClient = WebChromeClient()
 
-      binding.videoView.setOnClickListener {
-          if (binding.fullscreen.visibility == View.VISIBLE) {
-              binding.fullscreen.animate().alpha(0f).duration = 500
-              binding.fullscreen.visibility = View.GONE
-              binding.play.animate().alpha(0f).duration = 500
-              binding.play.visibility = View.GONE
-              binding.seekBar.animate().alpha(0f).duration = 500
-              binding.seekBar.visibility = View.GONE
 
-          }else if(binding.fullscreen.visibility == View.GONE){
-              binding.fullscreen.animate().alpha(1f).duration = 500
-              binding.fullscreen.visibility = View.VISIBLE
-              binding.play.animate().alpha(1f).duration = 500
-              binding.play.visibility = View.VISIBLE
-              binding.seekBar.animate().alpha(1f).duration = 500
-              binding.seekBar.visibility = View.VISIBLE
-          }
-      }
-
-      binding.play.setOnClickListener {
-          if(!isPlaying){
-              isPlaying = true
-              binding.videoView.start()
-              binding.play.animate().alpha(0f).duration = 500
-              binding.play.setImageResource(R.drawable.ic_baseline_pause_24)
-          }else if(isPlaying){
-              isPlaying = false
-              binding.videoView.stopPlayback()
-              binding.play.animate().alpha(1f).duration = 500
-              binding.play.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-          }
-      }
-      binding.fullscreen.setOnClickListener {
-          Toast.makeText(requireContext(), "Pls wait a little", Toast.LENGTH_SHORT).show()
-          findNavController().navigate(R.id.action_playerLayout_to_lansdcapeFragment)
-      }
+        }
     }
+
+
+
 }
